@@ -2,8 +2,29 @@
 <html>
 
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://www.booxi.com/booknow/booknow.js"></script>
   <script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXX "></script>
+  <style>
+    #bx_bnv_iframe {
+      z-index: 500;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 
 <body>
@@ -22,6 +43,27 @@
       });
     }
 
+    // Sample customer data - in a real implementation, this could come from your user database
+    var customerData = {
+      clientCount: 1,
+      isAttending: true,
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.doe@example.com',
+      mobilePhoneNumber: '+886912345678',
+      remindByEmail: true,
+      remindBySMS: true,
+      address: {
+        street: '101 Taipei Road',
+        city: 'Taipei',
+        country: 'TW',
+        state: '',
+        postalCode: '10001'
+      },
+      additionalRequest: '',
+      skipClientForm: false
+    };
+
     window.booxiBookNow = function (apiKey) {
       if (typeof BookNow != 'object') {
         return;
@@ -32,14 +74,62 @@
         googleTag: booxiGTag,
         iframeId: 'bx_bnv_iframe',
         language: 'en',
-        bookingFlow: 'merchant',
+        bookingFlow: 'locations',
         locationCategory: 'default',
-        onBookedRedirectTo: 'https://macys.benefitcosmetics.com/optin.html'
+        onBookedRedirectTo: 'https://macys.benefitcosmetics.com/optin.html',
+        onAbortRedirectTo: 'index.html',
+        client: customerData
       });
     }
+
+    // Function to get URL parameters - useful for passing customer data via URL
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // Function to dynamically update customer data from URL parameters
+    function updateCustomerDataFromUrl() {
+      var firstName = getUrlParameter('firstName');
+      var lastName = getUrlParameter('lastName');
+      var email = getUrlParameter('email');
+      var phone = getUrlParameter('phone');
+
+      if (firstName) customerData.firstName = firstName;
+      if (lastName) customerData.lastName = lastName;
+      if (email) customerData.email = email;
+      if (phone) customerData.mobilePhoneNumber = phone;
+    }
+
+    // Call this function when the page loads
+    window.onload = updateCustomerDataFromUrl;
   </script>
 
-  <button onclick="window.booxiBookNow('YG08502YsX86OWf0iDWx67i4w359820W');">Book Now</button>
+  <h1>Booxi 預約系統</h1>
+
+  <button onclick="window.booxiBookNow('YG08502YsX86OWf0iDWx67i4w359820W');">立即預約</button>
+
+  <button onclick="BookNow.open({
+                        apiKey: 'YG08502YsX86OWf0iDWx67i4w359820W',
+                        iframeId: 'bx_bnv_iframe',
+                        language: 'zh-TW',
+                        bookingFlow: 'locations',
+                        locationTags: 'service:vip',
+                        googleTag: booxiGTag,
+                        client: customerData,
+                        acquisitionChannel: 'website_vip'
+                      })">
+    VIP 服務預約
+  </button>
+
+  <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+    <h3>客戶資料預填功能說明</h3>
+    <p>您可以通過 URL 參數傳遞客戶資料，例如：</p>
+    <code>index.html?firstName=John&lastName=Doe&email=john.doe@example.com&phone=+886912345678</code>
+    <p>系統將自動填充這些資料到預約表單中。</p>
+  </div>
 
 </body>
 
