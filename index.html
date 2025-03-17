@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://www.booxi.eu/booknow/booknow.js"></script>
+  <script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXX "></script>
+</head>
+
+<body>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    var booxiGTag = function (...args) {
+      if (args.length < 2) {
+        return;
+      }
+
+      window.dataLayer.push({
+        event: args[1],
+        event_data: args[2] || {}
+      });
+    }
+
+    window.booxiBookNow = function (apiKey) {
+      if (typeof BookNow != 'object') {
+        return;
+      }
+
+      BookNow.open({
+        apiKey: apiKey,
+        googleTag: booxiGTag,
+        iframeId: 'bx_bnv_iframe',
+        language: 'en',
+        bookingFlow: 'merchant',
+        locationCategory: 'default',
+        onBookedRedirectTo: 'https://macys.benefitcosmetics.com/optin.html'
+      });
+    }
+  </script>
+
+  <button onclick="window.booxiBookNow('YG08502YsX86OWf0iDWx67i4w359820W');">Book Now</button>
+
+</body>
+
+</html>
